@@ -1,0 +1,27 @@
+# secrets
+.env
+.env.*
+!.env.example.txt
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+*.log
+
+# data assets (если по ДЗ складываешь туда скриншоты/pdf)
+data/
+data/*.png
+data/*.jpg
+data/*.jpeg
+data/*.webp
+data/*.pdf
+
+# OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
