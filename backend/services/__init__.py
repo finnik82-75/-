@@ -1,4 +1,9 @@
-from .openai_service import OpenAIService
-from .parser_service import ParserService
-from .history_service import HistoryService
+"""
+Пакет сервисов.
+
+Важно: не импортируем конкретные сервисы на уровне пакета, чтобы избежать
+побочных эффектов при `import backend.services.*` (инициализация клиентов, логирование и т.д.).
+"""
+
+__all__: list[str] = []
 

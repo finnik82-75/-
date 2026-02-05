@@ -19,7 +19,9 @@ from backend.models.schemas import (
     ParseDemoRequest,
     ParseDemoResponse,
     ParsedContent,
-    HistoryResponse
+    HistoryResponse,
+    ParseCompetitorsResponse,
+    CompetitorParsedItem,
 )
 from backend.services.openai_service import openai_service
 from backend.services.parser_service import parser_service
@@ -308,6 +310,145 @@ async def parse_demo(request: ParseDemoRequest):
             success=False,
             error=str(e)
         )
+
+
+@app.post("/parse_competitors", response_model=ParseCompetitorsResponse)
+async def parse_competitors():
+    """
+    Автоматический парсинг и AI-анализ всех конкурентов из настроек.
+    
+    Для каждого URL:
+    - открываем страницу через Chrome (Selenium),
+    - создаём скриншот,
+    - запускаем AI-анализ (vision / текстовый),
+    - сохраняем краткий результат в историю.
+    """
+    logger.info("=" * 50)
+    logger.info("🌐 API: ПАРСИНГ ВСЕХ КОНКУРЕНТОВ")
+    logger.info(f"  Всего конкурентов: {len(settings.competitor_urls)}")
+    
+    items: list[CompetitorParsedItem] = []
+    success_count = 0
+    error_count = 0
+    
+    for url in settings.competitor_urls:
+        logger.info("-" * 50)
+        logger.info(f"  🔗 Конкурент: {url}")
+        
+        try:
+            total_start = time.time()
+            
+            # Парсинг страницы
+            logger.info("  🔍 Запуск парсинга...")
+            parse_start = time.time()
+            title, h1, first_paragraph, screenshot_bytes, error = await parser_service.parse_url(url)
+            parse_elapsed = time.time() - parse_start
+            logger.info(f"  ⏱ Парсинг: {parse_elapsed:.2f} сек")
+            
+            if error:
+                logger.error(f"  ❌ Ошибка парсинга: {error}")
+                error_count += 1
+                items.append(
+                    CompetitorParsedItem(
+                        url=url,
+                        success=False,
+                        data=ParsedContent(
+                            url=url,
+                            title=title,
+                            h1=h1,
+                            first_paragraph=first_paragraph,
+                            analysis=None,
+                            error=error,
+                        ),
+                        error=error,
+                    )
+                )
+                # В историю тоже фиксируем неуспешную попытку
+                history_service.add_entry(
+                    request_type="parse",
+                    request_summary=f"URL: {url}",
+                    response_summary=f"Ошибка парсинга: {error}",
+                )
+                continue
+            
+            logger.info(f"  📌 Title: {title[:50] if title else 'N/A'}...")
+            logger.info(f"  📌 H1: {h1[:50] if h1 else 'N/A'}...")
+            
+            # Конвертируем скриншот в base64 (если есть)
+            screenshot_base64 = parser_service.screenshot_to_base64(screenshot_bytes) if screenshot_bytes else None
+            
+            # AI-анализ
+            logger.info("  🤖 Запуск AI анализа...")
+            ai_start = time.time()
+            if screenshot_base64:
+                analysis = await openai_service.analyze_website_screenshot(
+                    screenshot_base64=screenshot_base64,
+                    url=url,
+                    title=title,
+                    h1=h1,
+                    first_paragraph=first_paragraph,
+                )
+            else:
+                logger.warning("  ⚠ Скриншот недоступен, fallback на текстовый анализ")
+                analysis = await openai_service.analyze_parsed_content(
+                    title=title,
+                    h1=h1,
+                    paragraph=first_paragraph,
+                )
+            ai_elapsed = time.time() - ai_start
+            logger.info(f"  ⏱ AI анализ: {ai_elapsed:.2f} сек")
+            
+            parsed_content = ParsedContent(
+                url=url,
+                title=title,
+                h1=h1,
+                first_paragraph=first_paragraph,
+                analysis=analysis,
+            )
+            
+            # Сохраняем в историю
+            logger.info("  💾 Сохранение в историю...")
+            history_service.add_entry(
+                request_type="parse",
+                request_summary=f"URL: {url}",
+                response_summary=analysis.summary[:100] if analysis.summary else f"Title: {title or 'N/A'}",
+            )
+            
+            total_elapsed = time.time() - total_start
+            logger.info(f"  ✅ УСПЕХ: Конкурент обработан за {total_elapsed:.2f} сек")
+            
+            success_count += 1
+            items.append(
+                CompetitorParsedItem(
+                    url=url,
+                    success=True,
+                    data=parsed_content,
+                    error=None,
+                )
+            )
+        except Exception as e:
+            logger.error(f"  ❌ Неизвестная ошибка при обработке конкурента {url}: {e}")
+            error_count += 1
+            items.append(
+                CompetitorParsedItem(
+                    url=url,
+                    success=False,
+                    data=None,
+                    error=str(e),
+                )
+            )
+    
+    logger.info("=" * 50)
+    logger.info(f"🌐 API: ПАРСИНГ ВСЕХ КОНКУРЕНТОВ ЗАВЕРШЁН")
+    logger.info(f"  Успехов: {success_count}")
+    logger.info(f"  Ошибок: {error_count}")
+    
+    return ParseCompetitorsResponse(
+        items=items,
+        total=len(items),
+        success_count=success_count,
+        error_count=error_count,
+    )
 
 
 @app.get("/history", response_model=HistoryResponse)

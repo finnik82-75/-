@@ -11,19 +11,19 @@ from pathlib import Path
 def build_exe():
     """Собрать .exe файл"""
     print("=" * 60)
-    print("🔨 СБОРКА DESKTOP ПРИЛОЖЕНИЯ")
+    print("СБОРКА DESKTOP ПРИЛОЖЕНИЯ")
     print("=" * 60)
     
     # Текущая директория
     current_dir = Path(__file__).parent
     
     # Проверяем наличие PyInstaller
-    print("\n📦 Проверка PyInstaller...")
+    print("\nПроверка PyInstaller...")
     try:
         import PyInstaller
-        print(f"   ✓ PyInstaller {PyInstaller.__version__}")
+        print(f"   OK PyInstaller {PyInstaller.__version__}")
     except ImportError:
-        print("   ✗ PyInstaller не установлен")
+        print("   ERROR PyInstaller не установлен")
         print("   Установка: pip install pyinstaller")
         sys.exit(1)
     
@@ -57,7 +57,7 @@ def build_exe():
         "main.py"
     ]
     
-    print(f"\n🚀 Запуск сборки: {app_name}.exe")
+    print(f"\nЗапуск сборки: {app_name}.exe")
     print("-" * 60)
     
     # Запускаем PyInstaller
@@ -69,17 +69,17 @@ def build_exe():
         if exe_path.exists():
             size_mb = exe_path.stat().st_size / (1024 * 1024)
             print("\n" + "=" * 60)
-            print("✅ СБОРКА ЗАВЕРШЕНА УСПЕШНО!")
+            print("СБОРКА ЗАВЕРШЕНА УСПЕШНО!")
             print("=" * 60)
-            print(f"\n📁 Файл: {exe_path}")
-            print(f"📊 Размер: {size_mb:.1f} MB")
-            print("\n💡 Для запуска:")
+            print(f"\nФайл: {exe_path}")
+            print(f"Размер: {size_mb:.1f} MB")
+            print("\nДля запуска:")
             print(f"   1. Запустите backend: python run.py")
             print(f"   2. Запустите {app_name}.exe")
         else:
-            print("\n❌ Ошибка: .exe файл не найден")
+            print("\nОшибка: .exe файл не найден")
     else:
-        print("\n❌ Ошибка сборки")
+        print("\nОшибка сборки")
         sys.exit(1)
 
 

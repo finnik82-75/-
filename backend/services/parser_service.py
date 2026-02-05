@@ -195,8 +195,24 @@ class ParserService:
             self._parse_sync,
             url
         )
-        
+
         return result
+    
+    async def parse_competitor_urls(self) -> list[Tuple[str, Optional[str], Optional[str], Optional[str], Optional[bytes], Optional[str]]]:
+        """
+        Автоматический парсинг всех сайтов конкурентов из настроек
+        
+        Возвращает список кортежей:
+        (url, title, h1, first_paragraph, screenshot_bytes, error)
+        """
+        results: list[Tuple[str, Optional[str], Optional[str], Optional[str], Optional[bytes], Optional[str]]] = []
+        
+        for url in settings.competitor_urls:
+            logger.info(f"🚀 Автоматический парсинг конкурента: {url}")
+            title, h1, first_paragraph, screenshot_bytes, error = await self.parse_url(url)
+            results.append((url, title, h1, first_paragraph, screenshot_bytes, error))
+        
+        return results
     
     def screenshot_to_base64(self, screenshot_bytes: bytes) -> str:
         """Конвертировать скриншот в base64"""

@@ -69,6 +69,22 @@ class ParseDemoResponse(BaseModel):
     error: Optional[str] = None
 
 
+class CompetitorParsedItem(BaseModel):
+    """Результат парсинга и анализа одного конкурента"""
+    url: str
+    success: bool
+    data: Optional[ParsedContent] = None
+    error: Optional[str] = None
+
+
+class ParseCompetitorsResponse(BaseModel):
+    """Сводный ответ по всем конкурентам"""
+    items: List[CompetitorParsedItem]
+    total: int
+    success_count: int
+    error_count: int
+
+
 # === История ===
 
 class HistoryItem(BaseModel):

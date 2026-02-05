@@ -12,6 +12,17 @@ load_dotenv()
 # === Настройка логирования ===
 def setup_logging():
     """Настройка логирования для всего приложения"""
+    # В Windows-консолях часто стоит cp1251/cp866, из-за чего эмодзи/галочки ломают логирование.
+    # Принудительно включаем UTF-8, чтобы избежать UnicodeEncodeError.
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        # Если пере-настройка недоступна, просто продолжаем без неё.
+        pass
+
     log_format = "%(asctime)s | %(levelname)-8s | %(name)-25s | %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"
     
@@ -57,8 +68,17 @@ class Settings(BaseSettings):
     max_history_items: int = 10
     
     # Парсер
-    parser_timeout: int = 10
+    # Таймаут ожидания загрузки страницы (секунды)
+    parser_timeout: int = 40
     parser_user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    
+    # Сайты конкурентов для автоматического парсинга
+    competitor_urls: list[str] = [
+        "https://www.chita.ru/",
+        "https://zab.ru/",
+        "https://zabnews.ru/",
+        "https://www.mkchita.ru/",
+    ]
     
     class Config:
         env_file = ".env"
