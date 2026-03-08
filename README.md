@@ -1,266 +1,169 @@
-# 🔍 Мониторинг конкурентов - AI Ассистент
+# AI Competitor Monitoring Platform
 
-MVP приложение для анализа конкурентной среды с поддержкой мультимодальности (текст и изображения).
+**AI-powered system for automated competitor content analysis**
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-purple.svg)
-![PyQt6](https://img.shields.io/badge/PyQt6-6.6+-orange.svg)
+A production-oriented platform for media, marketing, and strategy teams that automates competitor monitoring: it scrapes news portals, analyzes text and visuals with LLM and Vision API, and delivers structured insights. No more manual tracking—get systematic analysis of editorial policy, tone, themes, and visual style across competitors, with history and optional desktop client.
 
-## 📋 Описание
+Suitable for **media holdings**, **marketing agencies**, **regional publishers**, and **digital teams** who need to benchmark competitors and inform content strategy.
 
-Приложение разработано для **мониторинга региональных новостных порталов** и позволяет:
+---
 
-- **Анализировать текстовый контент конкурентов** — получать структурированную аналитику редакционной политики с выявлением сильных/слабых сторон, уникальных форматов подачи и рекомендаций
-- **Анализировать визуальный стиль порталов** — скриншоты главных страниц и интерфейсов с оценкой визуального стиля и подачи контента
-- **Парсить сайты конкурентов** — автоматически извлекать title, заголовки, текстовый контент и создавать скриншоты через Selenium
-- **Автоматический анализ всех конкурентов** — массовый парсинг и AI-анализ всех новостных порталов из конфигурации одним запросом
-- **Хранить историю анализов** — последние 10 запросов сохраняются для быстрого доступа и сравнения
-- **Desktop приложение** — удобный графический интерфейс на PyQt6 для работы без браузера
+## Business Problem
 
-## 🚀 Быстрый старт
+| Pain point | Impact |
+|------------|--------|
+| **Manual competitor monitoring** | Consumes hours every week with little structure. |
+| **No systematic view of editorial policy** | Hard to see what competitors focus on and how they frame stories. |
+| **No automated comparison of content and visuals** | Text and design are assessed ad hoc, not at scale. |
+| **Difficulty tracking strategy shifts** | Changes in tone, topics, or format go unnoticed until too late. |
 
-### 1. Клонирование и установка зависимостей
+The platform addresses these by automating collection, AI analysis (text + images), and storage so teams can focus on decisions instead of manual monitoring.
+
+---
+
+## Solution
+
+End-to-end flow:
+
+**User** → **REST API** → **Parser (Selenium)** → **LLM (GPT-4o)** → **Vision API** → **Storage** → **Dashboard / Desktop client**
+
+- **Bulk article analysis**: parse multiple competitor URLs in one run.
+- **Theme and tone detection**: identify main topics and sentiment from text.
+- **Visual style analysis**: screenshots analyzed for layout, style, and UX.
+- **Competitor comparison**: side-by-side insights across configured portals.
+- **History**: last analyses stored for quick access and trend review.
+
+---
+
+## Architecture
+
+| Layer | Technology | Role |
+|-------|------------|------|
+| **Backend** | FastAPI | REST API, routing, orchestration. |
+| **Parsing** | Selenium | Scraping pages, screenshots, extracting title/headings/text. |
+| **AI (text)** | OpenAI GPT-4o | Editorial policy, strengths/weaknesses, recommendations. |
+| **AI (vision)** | OpenAI Vision API | Visual style, layout, and content presentation. |
+| **Storage** | Local DB / JSON | Persisted history of analyses. |
+| **Client** | PyQt6 desktop app | Desktop UI for running analyses and viewing results. |
+| **Config** | `.env` | API keys, endpoints, ports. |
+
+---
+
+## Tech Stack
+
+- **Python**
+- **FastAPI** — REST API
+- **OpenAI API** — GPT-4o (text + vision)
+- **Selenium** — browser automation and scraping
+- **PyQt6** — desktop client
+- **python-dotenv** — environment configuration
+- **REST** — standard HTTP API design
+
+---
+
+## Key Features
+
+- **Automated competitor scraping** — scheduled or on-demand parsing of configured portals.
+- **AI text analysis** — themes, tone, strengths/weaknesses, and recommendations.
+- **Visual content analysis** — screenshots evaluated for style and structure.
+- **Trend detection** — historical data for comparing runs over time.
+- **Historical data tracking** — recent analyses stored and retrievable.
+- **Desktop client support** — PyQt6 app for running analyses without a browser.
+- **Production-ready API** — clear endpoints, CORS, logging, and docs (Swagger/ReDoc).
+
+---
+
+## Use Cases
+
+- **Media holdings** — monitor rival outlets and align own editorial strategy.
+- **Marketing agencies** — benchmark client competitors’ content and creative.
+- **Regional publishers** — track local competitors and differentiate.
+- **Strategy and insights** — evidence-based reports on competitor moves.
+- **Digital teams** — regular competitor snapshots for product and content decisions.
+
+---
+
+## How to Run
+
+### 1. Clone and prepare environment
 
 ```bash
-# Клонируйте репозиторий
 git clone https://github.com/yourusername/pem08-master.git
 cd pem08-master
 
-# Создайте виртуальное окружение
 python -m venv venv
+venv\Scripts\activate   # Windows
+# source venv/bin/activate   # Linux/macOS
 
-# Активируйте окружение
-# Windows:
-venv\Scripts\activate
-# Linux/Mac:
-source venv/bin/activate
-
-# Установите зависимости backend
 pip install -r requirements.txt
+```
 
-# Установите зависимости desktop приложения (опционально)
+Optional desktop client:
+
+```bash
 pip install -r desktop/requirements.txt
 ```
 
-### 2. Настройка переменных окружения
+### 2. Environment configuration
 
-Создайте файл `.env` в корне проекта (используйте `env.example.txt` как шаблон):
+Create a `.env` file in the project root:
 
 ```env
-PROXY_API_KEY=your_proxy_api_key_here
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_VISION_MODEL=gpt-4o-mini
+OPENAI_API_KEY=your_key_here
 ```
 
-**Примечание:** Приложение использует ProxyAPI (OpenAI-совместимый API для России). Получите ключ на https://proxyapi.ru/
+For OpenAI-compatible proxies (e.g. ProxyAPI), you can use:
 
-### 3. Настройка конкурентов
-
-Отредактируйте `backend/config.py` и укажите URL сайтов конкурентов:
-
-```python
-competitor_urls: list[str] = [
-    "https://www.chita.ru/",
-    "https://zab.ru/",
-    "https://zabnews.ru/",
-    "https://www.mkchita.ru/",
-]
+```env
+PROXY_API_KEY=your_key_here
 ```
 
-### 4. Запуск приложения
+Optional: `OPENAI_MODEL`, `OPENAI_VISION_MODEL`, `API_HOST`, `API_PORT`. See `env.example.txt`.
 
-#### Вариант A: Web-интерфейс
+### 3. Configure competitors
+
+Edit `backend/config.py` and set `competitor_urls` to your target portals.
+
+### 4. Start the backend
 
 ```bash
-# Запуск сервера
+uvicorn backend.main:app --reload
+```
+
+Or use the launcher:
+
+```bash
 python run.py
 ```
 
-Приложение будет доступно по адресу: http://localhost:8000
+- API: **http://localhost:8000**
+- Swagger: **http://localhost:8000/docs**
+- ReDoc: **http://localhost:8000/redoc**
 
-#### Вариант B: Desktop приложение
+### 5. (Optional) Desktop client
+
+With the backend running:
 
 ```bash
-# 1. Сначала запустите backend сервер
-python run.py
-
-# 2. В другом терминале запустите desktop приложение
 cd desktop
 python main.py
 ```
 
-#### Вариант C: Собранное Desktop приложение (.exe)
+---
 
-```bash
-# 1. Соберите .exe файл
-cd desktop
-python build.py
+## Portfolio Positioning
 
-# 2. Запустите backend сервер
-python run.py
+This project demonstrates:
 
-# 3. Запустите CompetitorMonitor.exe из папки desktop/dist/
-```
+- **AI system design** — combining LLM and Vision in one product.
+- **Backend architecture** — FastAPI, services, and clear API boundaries.
+- **LLM integration** — structured prompts and parsing for editorial analysis.
+- **Vision API integration** — image-based evaluation of competitor sites.
+- **Automated content intelligence** — from URLs to actionable insights.
+- **Business-focused AI implementation** — built for real monitoring and strategy use cases.
 
-## 📁 Структура проекта
+---
 
-```
-pem08-master/
-├── backend/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI приложение
-│   ├── config.py            # Конфигурация (URL конкурентов, таймауты)
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── schemas.py       # Pydantic модели
-│   └── services/
-│       ├── __init__.py
-│       ├── openai_service.py    # Работа с ProxyAPI (OpenAI-совместимый)
-│       ├── parser_service.py    # Парсинг веб-страниц через Selenium
-│       └── history_service.py   # Управление историей
-├── desktop/
-│   ├── main.py              # PyQt6 desktop приложение
-│   ├── api_client.py        # API клиент для связи с backend
-│   ├── styles.py            # Стили интерфейса
-│   ├── build.py             # Скрипт сборки .exe
-│   ├── requirements.txt     # Зависимости desktop приложения
-│   └── dist/
-│       └── CompetitorMonitor.exe  # Собранное приложение
-├── frontend/
-│   ├── index.html           # HTML страница
-│   ├── styles.css          # Стили
-│   └── app.js              # JavaScript логика
-├── requirements.txt         # Зависимости backend
-├── env.example.txt         # Пример .env файла
-├── history.json            # Файл истории (создаётся автоматически)
-├── README.md               # Этот файл
-└── docs.md                 # Документация API
-```
+## License
 
-## 🔧 Функциональность
-
-### Анализ текста (`POST /analyze_text`)
-- Принимает текстовый контент с сайта конкурента (минимум 10 символов)
-- Возвращает:
-  - Сильные стороны редакционной политики
-  - Слабые стороны подачи контента
-  - Уникальные форматы и особенности портала
-  - Рекомендации по улучшению
-  - Общее резюме о редакционной политике и повестке
-
-### Анализ изображений (`POST /analyze_image`)
-- Принимает скриншоты сайтов: PNG, JPG, GIF, WEBP
-- Возвращает:
-  - Описание визуального стиля портала
-  - Инсайты о подаче контента и структуре сайта
-  - Оценку визуального стиля (0-10)
-  - Рекомендации по улучшению интерфейса
-
-### Парсинг сайтов (`POST /parse_demo`)
-- Принимает URL сайта
-- Извлекает через Selenium: title, h1, первый абзац, скриншот
-- Автоматически анализирует извлечённый контент через Vision API
-
-### Массовый анализ конкурентов (`POST /parse_competitors`)
-- Автоматически парсит и анализирует все сайты из `competitor_urls` в конфиге
-- Сохраняет результаты в историю
-- Возвращает сводку по всем конкурентам
-
-### История (`GET /history`)
-- Хранит последние 10 запросов
-- Сохраняет тип запроса, краткое описание, время
-
-## 🛠️ Технологии
-
-- **Backend**: FastAPI, Python 3.9+
-- **AI**: ProxyAPI (OpenAI-совместимый API), GPT-4o-mini
-- **Парсинг**: Selenium WebDriver, ChromeDriver
-- **Frontend**: Vanilla JS, CSS3
-- **Desktop**: PyQt6, PyInstaller
-- **Валидация**: Pydantic
-
-## 📖 API Документация
-
-После запуска сервера доступна интерактивная документация:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
-
-Подробная документация API в файле [docs.md](docs.md)
-
-## 🖥️ Desktop Приложение
-
-### Сборка .exe файла
-
-```bash
-cd desktop
-python build.py
-```
-
-Собранный файл будет в `desktop/dist/CompetitorMonitor.exe`
-
-### Возможности Desktop приложения
-
-- ✅ Графический интерфейс на PyQt6
-- ✅ Анализ текста с drag & drop
-- ✅ Анализ изображений с превью
-- ✅ Парсинг сайтов по URL
-- ✅ Просмотр истории запросов
-- ✅ Индикатор подключения к серверу
-- ✅ Темная тема интерфейса
-
-## ⚠️ Требования
-
-- Python 3.9+
-- ProxyAPI ключ (https://proxyapi.ru/)
-- Chrome браузер (для парсинга через Selenium)
-- Интернет-соединение для работы AI и парсинга
-
-## 📝 Использование
-
-### Пример: Анализ конкурента через API
-
-```python
-import requests
-
-# Анализ текста
-response = requests.post("http://localhost:8000/analyze_text", json={
-    "text": "Текст конкурента для анализа..."
-})
-print(response.json())
-
-# Парсинг сайта
-response = requests.post("http://localhost:8000/parse_demo", json={
-    "url": "https://example.com"
-})
-print(response.json())
-
-# Массовый анализ всех конкурентов
-response = requests.post("http://localhost:8000/parse_competitors")
-print(response.json())
-```
-
-### Пример: CLI для проверки парсинга
-
-```bash
-# Проверка парсинга всех конкурентов (без AI анализа)
-python -m backend.run_competitors
-```
-
-## 🎯 Кейс использования
-
-Это приложение разработано для **мониторинга региональных новостных порталов** в Забайкальском крае:
-
-- **Анализ редакционной политики конкурентов** — понимание повестки, акцентов и подходов к подаче новостей
-- **Выявление сильных и слабых сторон порталов** — что работает хорошо у конкурентов, а что можно улучшить
-- **Сравнение визуального стиля и подачи контента** — оценка дизайна, структуры и пользовательского опыта
-- **Автоматизация сбора данных о конкурентах** — регулярный мониторинг изменений на сайтах конкурентов
-- **Поддержка принятия редакционных решений** — данные для стратегического планирования контента
-
-## 📝 Лицензия
-
-MIT License
-
-## 🤝 Вклад
-
-Приветствуются pull requests и issues!
+MIT License. Contributions and issues are welcome.

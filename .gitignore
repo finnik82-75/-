@@ -47,6 +47,11 @@ history.json
 .DS_Store
 Thumbs.db
 
+# Temporary and generated
+*.pdf
+*.tmp
+*.temp
+
 # Desktop build artifacts
 desktop/build/
 desktop/dist/
