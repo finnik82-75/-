@@ -1,91 +1,91 @@
 # AI Competitor Monitoring Platform
 
-**AI-powered system for automated competitor content analysis**
+**AI-система мониторинга и анализа конкурентов для медиа и бизнеса**
 
-A production-oriented platform for media, marketing, and strategy teams that automates competitor monitoring: it scrapes news portals, analyzes text and visuals with LLM and Vision API, and delivers structured insights. No more manual tracking—get systematic analysis of editorial policy, tone, themes, and visual style across competitors, with history and optional desktop client.
+Платформа автоматизирует мониторинг новостных порталов и медиа-ресурсов: собирает контент, анализирует тексты с помощью LLM и визуал — через Vision API, формирует структурированные аналитические выводы. Ручной мониторинг заменяется системным анализом редакционной политики, тональности, тематики и визуального стиля конкурентов с сохранением истории и возможностью работы через десктоп-клиент.
 
-Suitable for **media holdings**, **marketing agencies**, **regional publishers**, and **digital teams** who need to benchmark competitors and inform content strategy.
-
----
-
-## Business Problem
-
-| Pain point | Impact |
-|------------|--------|
-| **Manual competitor monitoring** | Consumes hours every week with little structure. |
-| **No systematic view of editorial policy** | Hard to see what competitors focus on and how they frame stories. |
-| **No automated comparison of content and visuals** | Text and design are assessed ad hoc, not at scale. |
-| **Difficulty tracking strategy shifts** | Changes in tone, topics, or format go unnoticed until too late. |
-
-The platform addresses these by automating collection, AI analysis (text + images), and storage so teams can focus on decisions instead of manual monitoring.
+Подходит для **медиа-холдингов**, **маркетинговых агентств**, **региональных СМИ** и **digital-команд**, которым нужна регулярная аналитика по конкурентам и обоснование контент-стратегии.
 
 ---
 
-## Solution
+## Бизнес-задача (Business Problem)
 
-End-to-end flow:
+| Проблема | Влияние |
+|----------|--------|
+| **Ручной мониторинг конкурентов** | Отнимает много времени, результаты разрознены и не систематизированы. |
+| **Нет системного анализа редакционной политики** | Сложно понять, на чём фокус конкурентов и как они подают новости. |
+| **Нет автоматического сравнения контента и визуала** | Тексты и дизайн оцениваются выборочно, а не в масштабе. |
+| **Сложно отслеживать изменения стратегий конкурентов** | Сдвиги в тоне, темах или формате замечают слишком поздно. |
 
-**User** → **REST API** → **Parser (Selenium)** → **LLM (GPT-4o)** → **Vision API** → **Storage** → **Dashboard / Desktop client**
-
-- **Bulk article analysis**: parse multiple competitor URLs in one run.
-- **Theme and tone detection**: identify main topics and sentiment from text.
-- **Visual style analysis**: screenshots analyzed for layout, style, and UX.
-- **Competitor comparison**: side-by-side insights across configured portals.
-- **History**: last analyses stored for quick access and trend review.
-
----
-
-## Architecture
-
-| Layer | Technology | Role |
-|-------|------------|------|
-| **Backend** | FastAPI | REST API, routing, orchestration. |
-| **Parsing** | Selenium | Scraping pages, screenshots, extracting title/headings/text. |
-| **AI (text)** | OpenAI GPT-4o | Editorial policy, strengths/weaknesses, recommendations. |
-| **AI (vision)** | OpenAI Vision API | Visual style, layout, and content presentation. |
-| **Storage** | Local DB / JSON | Persisted history of analyses. |
-| **Client** | PyQt6 desktop app | Desktop UI for running analyses and viewing results. |
-| **Config** | `.env` | API keys, endpoints, ports. |
+Платформа решает это за счёт автоматизации сбора, AI-анализа (текст + изображения) и хранения данных, чтобы команды могли фокусироваться на решениях, а не на рутине мониторинга.
 
 ---
 
-## Tech Stack
+## Решение (Solution)
+
+Сквозной поток:
+
+**Пользователь** → **REST API** → **Парсер (Selenium)** → **LLM (GPT-4o)** → **Vision API** → **Хранилище** → **Дашборд / Десктоп-клиент**
+
+- **Массовый анализ статей** — разбор множества URL конкурентов за один запуск.
+- **Выявление тем и тональности** — определение основных тем и тона из текста.
+- **Анализ визуального стиля** — скриншоты страниц анализируются на композицию, стиль и UX.
+- **Сравнение конкурентов** — сопоставление выводов по настроенным порталам.
+- **Сохранение истории** — последние анализы хранятся для быстрого доступа и просмотра трендов.
+
+---
+
+## Архитектура (Architecture)
+
+| Слой | Технология | Назначение |
+|------|------------|------------|
+| **Backend** | FastAPI | REST API, маршрутизация, оркестрация. |
+| **Парсинг** | Selenium | Сбор страниц, скриншоты, извлечение заголовков и текста. |
+| **AI (текст)** | OpenAI GPT-4o | Редакционная политика, сильные/слабые стороны, рекомендации. |
+| **AI (визуал)** | OpenAI Vision API | Визуальный стиль, вёрстка и подача контента. |
+| **Хранилище** | Локальная БД / JSON | Сохранённая история анализов. |
+| **Клиент** | PyQt6 | Десктопное приложение для запуска анализов и просмотра результатов. |
+| **Конфигурация** | `.env` | API-ключи, эндпоинты, порты. |
+
+---
+
+## Технологический стек (Tech Stack)
 
 - **Python**
 - **FastAPI** — REST API
-- **OpenAI API** — GPT-4o (text + vision)
-- **Selenium** — browser automation and scraping
-- **PyQt6** — desktop client
-- **python-dotenv** — environment configuration
-- **REST** — standard HTTP API design
+- **OpenAI API** — GPT-4o (текст + vision)
+- **Selenium** — автоматизация браузера и парсинг
+- **PyQt6** — десктоп-клиент
+- **python-dotenv** — конфигурация через переменные окружения
+- **REST** — стандартная HTTP API-архитектура
 
 ---
 
-## Key Features
+## Возможности (Key Features)
 
-- **Automated competitor scraping** — scheduled or on-demand parsing of configured portals.
-- **AI text analysis** — themes, tone, strengths/weaknesses, and recommendations.
-- **Visual content analysis** — screenshots evaluated for style and structure.
-- **Trend detection** — historical data for comparing runs over time.
-- **Historical data tracking** — recent analyses stored and retrievable.
-- **Desktop client support** — PyQt6 app for running analyses without a browser.
-- **Production-ready API** — clear endpoints, CORS, logging, and docs (Swagger/ReDoc).
-
----
-
-## Use Cases
-
-- **Media holdings** — monitor rival outlets and align own editorial strategy.
-- **Marketing agencies** — benchmark client competitors’ content and creative.
-- **Regional publishers** — track local competitors and differentiate.
-- **Strategy and insights** — evidence-based reports on competitor moves.
-- **Digital teams** — regular competitor snapshots for product and content decisions.
+- **Автоматический сбор данных по конкурентам** — плановый или по запросу парсинг настроенных порталов.
+- **AI-анализ текста** — темы, тон, сильные/слабые стороны, рекомендации.
+- **Анализ визуального контента** — оценка скриншотов по стилю и структуре.
+- **Выявление трендов** — история для сравнения анализов во времени.
+- **История анализов** — хранение и быстрый доступ к последним отчётам.
+- **Поддержка десктоп-клиента** — приложение на PyQt6 для запуска анализов без браузера.
+- **Готовность API к продакшену** — понятные эндпоинты, CORS, логирование, документация (Swagger/ReDoc).
 
 ---
 
-## How to Run
+## Возможности применения (Use Cases)
 
-### 1. Clone and prepare environment
+- **Медиа-холдинги** — мониторинг изданий-конкурентов и выравнивание собственной редакционной стратегии.
+- **Маркетинговые агентства** — бенчмаркинг контента и креатива конкурентов клиентов.
+- **Региональные СМИ** — отслеживание локальных конкурентов и поиск отличий.
+- **Стратегический анализ** — отчёты на основе данных о действиях конкурентов.
+- **Digital-команды** — регулярные срезы по конкурентам для продуктовых и контент-решений.
+
+---
+
+## Как запустить (How to Run)
+
+### 1. Клонирование и окружение
 
 ```bash
 git clone https://github.com/yourusername/pem08-master.git
@@ -98,39 +98,39 @@ venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 ```
 
-Optional desktop client:
+Опционально — десктоп-клиент:
 
 ```bash
 pip install -r desktop/requirements.txt
 ```
 
-### 2. Environment configuration
+### 2. Конфигурация окружения
 
-Create a `.env` file in the project root:
+Создайте файл `.env` в корне проекта:
 
 ```env
 OPENAI_API_KEY=your_key_here
 ```
 
-For OpenAI-compatible proxies (e.g. ProxyAPI), you can use:
+При использовании OpenAI-совместимых прокси (например ProxyAPI):
 
 ```env
 PROXY_API_KEY=your_key_here
 ```
 
-Optional: `OPENAI_MODEL`, `OPENAI_VISION_MODEL`, `API_HOST`, `API_PORT`. See `env.example.txt`.
+Опционально: `OPENAI_MODEL`, `OPENAI_VISION_MODEL`, `API_HOST`, `API_PORT`. Пример — в `env.example.txt`.
 
-### 3. Configure competitors
+### 3. Настройка конкурентов
 
-Edit `backend/config.py` and set `competitor_urls` to your target portals.
+В `backend/config.py` задайте `competitor_urls` для нужных порталов.
 
-### 4. Start the backend
+### 4. Запуск backend
 
 ```bash
 uvicorn backend.main:app --reload
 ```
 
-Or use the launcher:
+Или через лаунчер:
 
 ```bash
 python run.py
@@ -140,9 +140,9 @@ python run.py
 - Swagger: **http://localhost:8000/docs**
 - ReDoc: **http://localhost:8000/redoc**
 
-### 5. (Optional) Desktop client
+### 5. (Опционально) Десктоп-клиент
 
-With the backend running:
+При запущенном backend:
 
 ```bash
 cd desktop
@@ -151,19 +151,19 @@ python main.py
 
 ---
 
-## Portfolio Positioning
+## Позиционирование (Portfolio Positioning)
 
-This project demonstrates:
+Проект демонстрирует:
 
-- **AI system design** — combining LLM and Vision in one product.
-- **Backend architecture** — FastAPI, services, and clear API boundaries.
-- **LLM integration** — structured prompts and parsing for editorial analysis.
-- **Vision API integration** — image-based evaluation of competitor sites.
-- **Automated content intelligence** — from URLs to actionable insights.
-- **Business-focused AI implementation** — built for real monitoring and strategy use cases.
+- **Проектирование AI-систем** — объединение LLM и Vision в одном продукте.
+- **Архитектуру backend** — FastAPI, сервисы, чёткие границы API.
+- **Интеграцию LLM** — структурированные промпты и разбор для редакционного анализа.
+- **Интеграцию Vision API** — оценка сайтов конкурентов по изображениям.
+- **Автоматизированную контент-аналитику** — от URL до пригодных к действию выводов.
+- **Бизнес-ориентированную реализацию AI** — под реальные задачи мониторинга и стратегии.
 
 ---
 
-## License
+## Лицензия
 
-MIT License. Contributions and issues are welcome.
+MIT License. Приветствуются контрибуции и issue.
