@@ -174,7 +174,7 @@
 | Результат анализа текста: сильные/слабые стороны, рекомендации |![Telegram dialog](docs/screenshots/анализ текста конкурента.png) |
 | Результат Vision-анализа: оценка стиля и инсайты | ![Telegram dialog](docs/screenshots/анализ изображений 2).png) |
 | Парсинг сайта: ввод URL и отчёт по странице |![Telegram dialog] `docs/screenshots/parse-demo.png` |
-| История запросов и быстрый доступ к прошлым отчётам |![Telegram dialog] `docs/screenshots/history.png` |
+| История запросов и быстрый доступ к прошлым отчётам |![Telegram dialog](docs/screenshots/история запросов.png)|
 | Десктоп-клиент (PyQt6): запуск анализа и просмотр сводки |![Telegram dialog] `docs/screenshots/desktop-client.png` |
 
 
